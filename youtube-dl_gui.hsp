@@ -1,0 +1,70 @@
+; debugウィンドウ関連の不具合回避 HSP Ver3.5
+#ifdef _debug
+	#uselib "kernel32.dll"
+	#define LoadLibrary LoadLibraryA
+	#func LoadLibraryA "LoadLibraryA" sptr
+	LoadLibrary "hsp3debug.dll"
+#endif
+
+#include "hspext.as"
+
+sdim url,5000
+sdim pass,1500
+sdim param,100
+title "youtube-dl 簡易GUI"
+font msgothic,16
+
+*one
+cls:mode=0:screen 0,300,160:url=""
+
+pos 10,5:mes "ダウンロードしたい動画のURLを入力"
+pos 10,30:input url,280,20
+pos 10,55:mes "動画の保存先"
+pos 10,80:input pass,220,20
+objsize 50,20
+pos 237,80:button gosub "選択",*select
+objsize 80,40
+pos 10,115:button goto "DL開始 ! ",*start
+pos 100,115:button goto "複数DLモード",*sametime
+stop
+
+*sametime
+cls:mode=1:screen 0,300,290:url=""
+
+pos 10,5:mes "ダウンロードしたい動画のURLを入力\n(行区切り)"
+pos 10,40:mesbox url,280,140,5
+pos 10,190:mes "動画の保存先"
+pos 10,210:input pass,220,20
+objsize 50,20
+pos 237,210:button gosub "選択",*select
+objsize 80,40
+pos 10,245:button goto "DL開始 ! ",*start
+pos 100,245:button goto "シンプルモード",*one
+stop
+
+
+*select
+selfolder pass,"動画を保存するフォルダを選択"
+if stat==0 : objprm 1,pass
+return
+
+*start
+if url==""{
+			dialog "動画のURLを入力してください"
+			stop
+		}
+if pass==""{
+			dialog "動画の保存先を選択してください"
+			stop
+		}
+dialog "ダウンロードを開始してもよろしいですか ? ",2,"確認"
+if stat!=6 : stop
+
+param=" \""+url+"\""
+
+if mode==1{
+	notesel url:notesave "tmp.txt":noteunsel
+	param=" -a tmp.txt"
+}
+exec "youtube-dl -o " + pass + "\"\\%(title)s.%(ext)s\"" + param
+stop
