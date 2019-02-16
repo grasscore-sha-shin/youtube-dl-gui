@@ -1,0 +1,14 @@
+﻿15
+youtube-dl Simple GUI
+Video URL
+File(s) location
+choose
+Download
+Multiple mode
+Video URL\n(one URL per line)
+Single mode
+Choose directory to save file(s)
+Input the video URL!
+Choose directory to save files!
+Are you sure?
+Confirmation

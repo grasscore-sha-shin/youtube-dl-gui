@@ -1,63 +1,82 @@
+
 ; debugウィンドウ関連の不具合回避 HSP Ver3.5
 #ifdef _debug
-	#uselib "kernel32.dll"
-	#define LoadLibrary LoadLibraryA
-	#func LoadLibraryA "LoadLibraryA" sptr
-	LoadLibrary "hsp3debug.dll"
+	//#uselib "kernel32.dll"
+	//#define LoadLibrary LoadLibraryA
+	//#func LoadLibraryA "LoadLibraryA" sptr
+	//LoadLibrary "hsp3debug.dll"
 #endif
 
+#include "hsp3utf.as"
 #include "hspext.as"
+#include "kernel32.as"
 
 sdim url,5000
 sdim pass,1500
 sdim param,100
-title "youtube-dl 簡易GUI"
-font msgothic,16
+sdim langdata,2000
+sdim lang,2000,14
+notesel langdata
+noteload "lang_ja.txt"
+GetUserDefaultLCID
+if stat!=1041:noteload "lang_en.txt"
+
+for i,1,notemax
+	noteget lang(i),i
+	strrep lang(i),"\\n","\n"
+next
+noteget lang_width,0
+
+fontwidth=strmid(lang_width,-1,2)
+fontwidth=int(fontwidth)
+
+title lang(1)
+font "",fontwidth
 
 *one
 cls:mode=0:screen 0,300,160:url=""
-
-pos 10,5:mes "ダウンロードしたい動画のURLを入力"
+font "",fontwidth
+pos 10,5:mes lang(2)
 pos 10,30:input url,280,20
-pos 10,55:mes "動画の保存先"
+pos 10,55:mes lang(3)
 pos 10,80:input pass,220,20
 objsize 50,20
-pos 237,80:button gosub "選択",*select
+pos 237,80:button gosub lang(4),*select
 objsize 80,40
-pos 10,115:button goto "DL開始 ! ",*start
-pos 100,115:button goto "複数DLモード",*sametime
+pos 10,115:button goto lang(5),*start
+pos 100,115:button goto lang(6),*sametime
 stop
 
 *sametime
 cls:mode=1:screen 0,300,290:url=""
-
-pos 10,5:mes "ダウンロードしたい動画のURLを入力\n(行区切り)"
+font "",fontwidth
+pos 10,5:mes lang(7)
 pos 10,40:mesbox url,280,140,5
-pos 10,190:mes "動画の保存先"
+pos 10,190:mes lang(3)
 pos 10,210:input pass,220,20
 objsize 50,20
-pos 237,210:button gosub "選択",*select
+pos 237,210:button gosub lang(4),*select
 objsize 80,40
-pos 10,245:button goto "DL開始 ! ",*start
-pos 100,245:button goto "シンプルモード",*one
+pos 10,245:button goto lang(5),*start
+pos 100,245:button goto lang(8),*one
 stop
 
 
 *select
-selfolder pass,"動画を保存するフォルダを選択"
+selfolder pass,lang(9)
 if stat==0 : objprm 1,pass
 return
 
 *start
 if url==""{
-			dialog "動画のURLを入力してください"
+			dialog lang(10)
 			stop
 		}
 if pass==""{
-			dialog "動画の保存先を選択してください"
+			dialog lang(11)
 			stop
 		}
-dialog "ダウンロードを開始してもよろしいですか ? ",2,"確認"
+dialog lang(12),2,lang(13)
 if stat!=6 : stop
 
 param=" \""+url+"\""
