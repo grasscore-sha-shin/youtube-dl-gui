@@ -64,7 +64,7 @@ stop
 
 *select
 selfolder pass,lang(9)
-if stat==0 : objprm 1,pass
+if stat==0 : objprm 1,cnvatos(pass)
 return
 
 *start
